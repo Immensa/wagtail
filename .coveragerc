@@ -5,9 +5,8 @@ branch = True
 source = wagtail
 
 omit =
-    */south_migrations/*
     */migrations/*
-    wagtail/vendor/*
+    docs/conf.py
 
 
 [report]

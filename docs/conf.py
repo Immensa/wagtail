@@ -15,6 +15,8 @@
 import sys
 import os
 
+from datetime import datetime
+
 
 # on_rtd is whether we are on readthedocs.org, this line of code grabbed from docs.readthedocs.org
 on_rtd = os.environ.get('READTHEDOCS', None) == 'True'
@@ -29,12 +31,11 @@ if not on_rtd:  # only import and set the theme if we're building docs locally
 # documentation root, use os.path.abspath to make it absolute, like shown here.
 sys.path.insert(0, os.path.abspath('..'))
 
-# Get Wagtail version
-from wagtail.wagtailcore import __version__
-
 # Autodoc may need to import some models modules which require django settings
 # be configured
 os.environ['DJANGO_SETTINGS_MODULE'] = 'wagtail.tests.settings'
+import django
+django.setup()
 
 # Use SQLite3 database engine so it doesn't attempt to use psycopg2 on RTD
 os.environ['DATABASE_ENGINE'] = 'django.db.backends.sqlite3'
@@ -50,7 +51,11 @@ os.environ['DATABASE_ENGINE'] = 'django.db.backends.sqlite3'
 # ones.
 extensions = [
     'sphinx.ext.autodoc',
+    'sphinx.ext.intersphinx',
 ]
+
+if not on_rtd:
+    extensions.append('sphinxcontrib.spelling')
 
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ['_templates']
@@ -66,14 +71,17 @@ master_doc = 'index'
 
 # General information about the project.
 project = u'Wagtail'
-copyright = u'2014, Torchbox'
+copyright = u'{year:d}, Torchbox'.format(year=datetime.now().year)
 
 # The version info for the project you're documenting, acts as replacement for
 # |version| and |release|, also used in various other places throughout the
 # built documents.
-#
+
+# Get Wagtail version
+from wagtail import __version__, VERSION
+
 # The short X.Y version.
-version = __version__
+version = '{}.{}'.format(VERSION[0], VERSION[1])
 # The full version, including alpha/beta/rc tags.
 release = __version__
 
@@ -116,6 +124,17 @@ pygments_style = 'sphinx'
 #keep_warnings = False
 
 
+# splhinxcontrib.spelling settings
+
+spelling_lang = 'en_GB'
+spelling_word_list_filename='spelling_wordlist.txt'
+
+# sphinx.ext.intersphinx settings
+intersphinx_mapping = {
+    'django': ('https://docs.djangoproject.com/en/stable/', 'https://docs.djangoproject.com/en/stable/_objects/')
+}
+
+
 # -- Options for HTML output ----------------------------------------------
 
 
@@ -135,12 +154,12 @@ pygments_style = 'sphinx'
 
 # The name of an image file (relative to this directory) to place at the top
 # of the sidebar.
-#html_logo = None
+html_logo = 'logo.png'
 
 # The name of an image file (within the static path) to use as favicon of the
 # docs.  This file should be a Windows icon file (.ico) being 16x16 or 32x32
 # pixels large.
-#html_favicon = None
+html_favicon = 'favicon.ico'
 
 # Add any paths that contain custom static files (such as style sheets) here,
 # relative to this directory. They are copied after the builtin static files,
@@ -274,3 +293,8 @@ texinfo_documents = [
 
 # If true, do not generate a @detailmenu in the "Top" node's menu.
 #texinfo_no_detailmenu = False
+
+
+def setup(app):
+    app.add_stylesheet('css/custom.css')
+    app.add_javascript('js/wagtailspace.js')

@@ -1,0 +1,19 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`ExplorerToggle basic 1`] = `
+<Button
+  accessibleLabel={null}
+  className="submenu-trigger"
+  dialogTrigger={true}
+  href="#"
+  icon="folder-open-inverse"
+  isLoading={false}
+  onClick={[Function]}
+  preventDefault={true}
+  target={null}
+>
+  <span>
+    To infinity and beyond!
+  </span>
+</Button>
+`;
